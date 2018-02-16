@@ -139,7 +139,7 @@ function Get-DSObject{
     }catch{
         $SearchAttributes = @{ADsPath = $ADsPath;Filter = $Filter}
         $EventMsg = Get-EventLogMessage -EventDescription "Get-DSObject Error:  Error finding user in home AD with Get-DSObject cmdlet" -AdditionalVarValues $SearchAttributes -ErrorObject $error[0] -EventType Error -Org 'DSObject'
-        $ID = Return-RightString $error[0].Exception.HResult.ToString() 4
+        $ID = Get-RightString $error[0].Exception.HResult.ToString() 4
         #I wrote an event log for the app I was building had to sanitize it but you could register a log in event long and write to if you want.
         #Write-EventLog -LogName <logname> -Source RemoteADAccess -EntryType Error -EventId $ID -Message $EventMsg
     }
@@ -148,3 +148,11 @@ function Get-DSObject{
         return $Result | %{ConvertFrom-oHashTable $_.Properties} | select $ReturnProperties
     }
 }
+
+function Get-LeftString([string]$String,[int]$Length){
+    return $String.substring(0,$Length)
+};New-alias left Get-LeftString
+
+function Get-RightString([string]$String,[int]$Length){
+    return $String.substring($String.length - $Length,$Length)
+};New-alias right Get-RightString
